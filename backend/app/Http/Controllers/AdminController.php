@@ -627,3 +627,43 @@ class AdminController extends Controller
         }
     }
 }
+
+//npm install -g @opencode/cli
+//# 1. Setting Docker + WSL2 + Ubuntu (PowerShell admin, lalu restart)
+//wsl --install
+# Docker Desktop → Settings → General: centang "Use the WSL 2 based engine"
+# Docker Desktop → Settings → Resources → WSL Integration: aktifkan Ubuntu
+
+# 2. Connect WSL di VS Code (install ekstensi "WSL"; pojok kiri bawah harus "WSL: Ubuntu")
+//cd ~/nama-projek && code .
+
+# 3. Copy .env dari .env.example, lalu EDIT bagian database:
+//cp .env.example .env
+#   DB_CONNECTION=mysql
+#   DB_HOST=mysql-server        <- nama service docker, bukan localhost
+#   DB_PORT=3306
+#   DB_DATABASE=API_ujikom
+#   DB_USERNAME=api_ujikom
+#   DB_PASSWORD=api_ujikom
+
+# 5. Install Composer (dependency / folder vendor, lewat container)
+//docker compose run --rm app-laravel composer install
+
+# 6. Docker compose up & build
+//docker compose up -d --build
+
+# 4. Generate key (dikerjakan SETELAH 5 dan 6)
+//docker compose exec app-laravel php artisan key:generate
+
+# 7. Install Laravel Sanctum (kalau belum ada di composer.json)
+//docker compose exec app-laravel composer require laravel/sanctum
+
+# 8. Install barryvdh/laravel-dompdf
+//docker compose exec app-laravel composer require barryvdh/laravel-dompdf
+
+# 9. Install API (route api.php + tabel token)
+//docker compose exec app-laravel php artisan install:api
+
+# 10. Migrate database & seeder (+ link storage buat gambar/foto)
+//docker compose exec app-laravel php artisan migrate --seed
+//docker compose exec app-laravel php artisan storage:link

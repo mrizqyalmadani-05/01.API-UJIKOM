@@ -21,4 +21,4 @@ class RegisterRequest extends FormRequest
             'alamat' => 'nullable|string',
         ];
     }
-}
+} 
