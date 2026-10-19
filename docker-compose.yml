@@ -8,6 +8,11 @@ services:
       MYSQL_USER: api_ujikom
       MYSQL_PASSWORD: api_ujikom
       MYSQL_ROOT_PASSWORD: passwordroot
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$${MYSQL_ROOT_PASSWORD}\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     ports:
       - "3306:3306"
     networks:
@@ -26,9 +31,14 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/var/www
-    command: php artisan serve --host=0.0.0.0 --port=8000
+    command: >-
+      sh -c 'if [ ! -f .env ]; then cp .env.example .env; fi;
+      if ! grep -q "^APP_KEY=." .env; then php artisan key:generate --force; fi;
+      php artisan migrate --force;
+      exec php artisan serve --host=0.0.0.0 --port=8000'
     depends_on:
-      - mysql-server
+      mysql-server:
+        condition: service_healthy
     networks:
       - API-UJIKOM
 
