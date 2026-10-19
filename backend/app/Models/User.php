@@ -75,4 +75,51 @@ class User extends Authenticatable
     {
         return $this->hasMany(LogAktivitas::class);
     }
+
+    // =========================================================
+    // Fitur tambahan dari OmmniDevv/api-ujikom (helper)
+    // =========================================================
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isPetugas(): bool
+    {
+        return $this->role === 'petugas';
+    }
+
+    public function isPeminjam(): bool
+    {
+        return $this->role === 'peminjam';
+    }
+
+    /**
+     * Scope pencarian user: nama, email, atau no HP.
+     */
+    public function scopeSearch($query, ?string $keyword)
+    {
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', "%{$keyword}%")
+                    ->orWhere('email', 'like', "%{$keyword}%")
+                    ->orWhere('no_hp', 'like', "%{$keyword}%");
+            });
+        }
+
+        return $query;
+    }
+
+    /**
+     * Scope filter role.
+     */
+    public function scopeByRole($query, ?string $role)
+    {
+        if ($role) {
+            $query->where('role', $role);
+        }
+
+        return $query;
+    }
 }

@@ -173,4 +173,28 @@ class PetugasController extends Controller
 
         return view('petugas.laporan.cetak', compact('peminjamans', 'bulan', 'status', 'totalDenda'));
     }
+
+    // =========================================================
+    // Fitur tambahan dari OmmniDevv/api-ujikom: Export Excel
+    // (OpenSpout — memory-efficient streaming, tanpa ubah UI)
+    // =========================================================
+
+    public function excelLaporan(Request $request)
+    {
+        $bulan  = $request->input('bulan', now()->format('Y-m'));
+        $status = $request->input('status', '');
+
+        [$tahun, $bln] = explode('-', $bulan);
+
+        $peminjamans = Peminjaman::with(['user', 'detailPinjam.alat', 'pengembalian'])
+            ->whereYear('tgl_pinjam', $tahun)
+            ->whereMonth('tgl_pinjam', $bln)
+            ->when($status, fn($q, $s) => $q->where('status', $s))
+            ->orderBy('tgl_pinjam')
+            ->get();
+
+        $filename = 'laporan-peminjaman-' . $bulan . '.xlsx';
+
+        return (new \App\Exports\LaporanPeminjamanExport($peminjamans))->download($filename);
+    }
 }

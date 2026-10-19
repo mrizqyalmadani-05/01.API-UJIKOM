@@ -40,4 +40,32 @@ class Peminjaman extends Model
     {
         return $this->hasOne(Pengembalian::class);
     }
+
+    // =========================================================
+    // Fitur tambahan dari OmmniDevv/api-ujikom
+    // =========================================================
+
+    /**
+     * Scope filter status peminjaman (reusable, bisa di-chain).
+     */
+    public function scopeByStatus($query, ?string $status)
+    {
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Scope pencarian berdasarkan nama peminjam.
+     */
+    public function scopeSearch($query, ?string $keyword)
+    {
+        if ($keyword) {
+            $query->whereHas('user', fn ($q) => $q->where('name', 'like', "%{$keyword}%"));
+        }
+
+        return $query;
+    }
 }

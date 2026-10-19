@@ -122,4 +122,37 @@ class PeminjamController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+
+    // =========================================================
+    // Fitur tambahan dari OmmniDevv/api-ujikom: Ajukan Kembali
+    // (peminjam meminta petugas memproses pengembalian —
+    //  status 'dipinjam' -> 'pengajuan_kembali', tanpa ubah UI)
+    // =========================================================
+
+    public function ajukanKembali($peminjaman_id)
+    {
+        $peminjaman = Peminjaman::where('user_id', auth()->id())
+            ->findOrFail($peminjaman_id);
+
+        if ($peminjaman->status !== 'dipinjam') {
+            return redirect()->back()
+                ->with('error', 'Hanya peminjaman berstatus "dipinjam" yang bisa diajukan pengembaliannya.');
+        }
+
+        try {
+            $peminjaman->update(['status' => 'pengajuan_kembali']);
+
+            \App\Services\ActivityLogger::log(
+                'Ajukan Pengembalian',
+                "Peminjaman #{$peminjaman->id} diajukan pengembalian oleh " . auth()->user()->name
+            );
+
+            return redirect()->back()
+                ->with('success', 'Pengajuan pengembalian berhasil dikirim. Tunggu petugas memprosesnya.');
+        } catch (\Exception $e) {
+            \App\Services\ActivityLogger::logError('Gagal Ajukan Pengembalian', $e->getMessage());
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan. Silakan coba lagi.');
+        }
+    }
 }

@@ -34,6 +34,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Laporan
     Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan.index');
     Route::get('/laporan/cetak', [AdminController::class, 'cetakLaporan'])->name('laporan.cetak');
+    Route::get('/laporan/excel', [AdminController::class, 'excelLaporan'])->name('laporan.excel'); // fitur tambahan: export Excel
 
     // CRUD Alat
     Route::get('/alat', [AdminController::class, 'indexAlat'])->name('alat.index');
@@ -91,6 +92,7 @@ Route::middleware(['auth', 'role:petugas,admin'])->prefix('petugas')->name('petu
     // Laporan
     Route::get('/laporan', [PetugasController::class, 'laporanIndex'])->name('laporan.index');
     Route::get('/laporan/cetak', [PetugasController::class, 'cetakLaporan'])->name('laporan.cetak');
+    Route::get('/laporan/excel', [PetugasController::class, 'excelLaporan'])->name('laporan.excel'); // fitur tambahan: export Excel
 });
 
 // =========================================================
@@ -108,4 +110,8 @@ Route::middleware(['auth', 'role:peminjam'])->prefix('peminjam')->name('peminjam
     // Pengembalian Alat
     Route::get('/kembalikan/{peminjaman_id}', [PeminjamController::class, 'formKembalikan'])->name('kembalikan.form');
     Route::post('/kembalikan/{peminjaman_id}', [PeminjamController::class, 'ajukanPengembalian'])->name('kembalikan.ajukan');
+
+    // Fitur tambahan: peminjam meminta petugas memproses pengembalian
+    // (status 'dipinjam' -> 'pengajuan_kembali')
+    Route::post('/kembalikan/{peminjaman_id}/ajukan-kembali', [PeminjamController::class, 'ajukanKembali'])->name('kembalikan.ajukan-kembali');
 });
