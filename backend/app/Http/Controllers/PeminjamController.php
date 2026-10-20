@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Profile\UpdateProfileRequest;
 use App\Models\Alat;
 use App\Models\DetailPinjam;
 use App\Models\Peminjaman;
 use App\Models\Pengembalian;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PeminjamController extends Controller
 {
@@ -151,6 +153,81 @@ class PeminjamController extends Controller
                 ->with('success', 'Pengajuan pengembalian berhasil dikirim. Tunggu petugas memprosesnya.');
         } catch (\Exception $e) {
             \App\Services\ActivityLogger::logError('Gagal Ajukan Pengembalian', $e->getMessage());
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan. Silakan coba lagi.');
+        }
+    }
+
+    // =========================================================
+    // Profil Peminjam (info akun, menu profil, foto profil)
+    // =========================================================
+
+    // Menampilkan halaman profil peminjam yang sedang login
+    public function profil()
+    {
+        $user = auth()->user();
+
+        return view('peminjam.profil', compact('user'));
+    }
+
+    // Memperbarui data profil (nama, email, no HP, alamat, password, foto)
+    public function updateProfil(UpdateProfileRequest $request)
+    {
+        $user = auth()->user();
+
+        $data = $request->only(['name', 'email', 'no_hp', 'alamat']);
+
+        // Password hanya diubah jika diisi
+        if ($request->filled('password')) {
+            $data['password'] = $request->password; // otomatis di-hash oleh cast model User
+        }
+
+        try {
+            // Upload foto profil baru (foto lama dihapus dari storage)
+            if ($request->hasFile('foto_profile')) {
+                if ($user->foto_profile) {
+                    Storage::disk('public')->delete($user->foto_profile);
+                }
+
+                $data['foto_profile'] = $request->file('foto_profile')
+                    ->store('foto_profil', 'public');
+            }
+
+            $user->update($data);
+
+            \App\Services\ActivityLogger::log(
+                'Update Profil',
+                "Peminjam {$user->name} memperbarui profilnya"
+            );
+
+            return redirect()->route('peminjam.profil')
+                ->with('success', 'Profil berhasil diperbarui.');
+        } catch (\Exception $e) {
+            \App\Services\ActivityLogger::logError('Gagal Update Profil', $e->getMessage());
+
+            return redirect()->back()->withInput()
+                ->with('error', 'Gagal memperbarui profil. Silakan coba lagi.');
+        }
+    }
+
+    // Menghapus foto profil (kembali ke tampilan default)
+    public function hapusFotoProfil()
+    {
+        $user = auth()->user();
+
+        if (! $user->foto_profile) {
+            return redirect()->route('peminjam.profil')
+                ->with('error', 'Foto profil belum ada.');
+        }
+
+        try {
+            Storage::disk('public')->delete($user->foto_profile);
+            $user->update(['foto_profile' => null]);
+
+            return redirect()->route('peminjam.profil')
+                ->with('success', 'Foto profil berhasil dihapus.');
+        } catch (\Exception $e) {
+            \App\Services\ActivityLogger::logError('Gagal Hapus Foto Profil', $e->getMessage());
 
             return redirect()->back()->with('error', 'Terjadi kesalahan. Silakan coba lagi.');
         }

@@ -111,6 +111,11 @@ Route::middleware(['auth', 'role:peminjam'])->prefix('peminjam')->name('peminjam
     Route::get('/kembalikan/{peminjaman_id}', [PeminjamController::class, 'formKembalikan'])->name('kembalikan.form');
     Route::post('/kembalikan/{peminjaman_id}', [PeminjamController::class, 'ajukanPengembalian'])->name('kembalikan.ajukan');
 
+    // Profil Peminjam (info akun, menu profil, foto profil)
+    Route::get('/profil', [PeminjamController::class, 'profil'])->name('profil');
+    Route::put('/profil', [PeminjamController::class, 'updateProfil'])->name('profil.update');
+    Route::post('/profil/foto/hapus', [PeminjamController::class, 'hapusFotoProfil'])->name('profil.foto.hapus');
+
     // Fitur tambahan: peminjam meminta petugas memproses pengembalian
     // (status 'dipinjam' -> 'pengajuan_kembali')
     Route::post('/kembalikan/{peminjaman_id}/ajukan-kembali', [PeminjamController::class, 'ajukanKembali'])->name('kembalikan.ajukan-kembali');

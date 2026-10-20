@@ -27,6 +27,11 @@
                           {{ request()->routeIs('peminjam.riwayat') || request()->routeIs('peminjam.kembalikan.*') ? 'bg-blue-700 text-white' : 'text-blue-200 hover:bg-blue-800 hover:text-white' }}">
                     Riwayat & Pengembalian
                 </a>
+                <a href="{{ route('peminjam.profil') }}"
+                   class="block px-4 py-2 rounded-lg text-sm font-medium transition
+                          {{ request()->routeIs('peminjam.profil*') ? 'bg-blue-700 text-white' : 'text-blue-200 hover:bg-blue-800 hover:text-white' }}">
+                    Profil Saya
+                </a>
             </nav>
 
             <div class="p-4 border-t border-blue-800 text-xs text-blue-300">
