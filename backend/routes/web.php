@@ -113,6 +113,7 @@ Route::middleware(['auth', 'role:peminjam'])->prefix('peminjam')->name('peminjam
 
     // Profil Peminjam (info akun, menu profil, foto profil)
     Route::get('/profil', [PeminjamController::class, 'profil'])->name('profil');
+    Route::get('/profil/foto', [PeminjamController::class, 'fotoProfil'])->name('profil.foto');
     Route::put('/profil', [PeminjamController::class, 'updateProfil'])->name('profil.update');
     Route::post('/profil/foto/hapus', [PeminjamController::class, 'hapusFotoProfil'])->name('profil.foto.hapus');
 

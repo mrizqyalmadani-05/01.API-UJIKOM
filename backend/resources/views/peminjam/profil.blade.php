@@ -34,7 +34,7 @@
             {{-- Informasi Profil --}}
             <div id="informasi" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center">
                 @if($user->foto_profile)
-                    <img src="{{ asset('storage/' . $user->foto_profile) }}" alt="Foto Profil"
+                    <img src="{{ route('peminjam.profil.foto') }}" alt="Foto Profil"
                          class="w-28 h-28 rounded-full object-cover mx-auto border-4 border-blue-100">
                 @else
                     <div class="w-28 h-28 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center mx-auto border-4 border-blue-50 text-4xl font-bold">
@@ -127,7 +127,7 @@
                     <label for="foto_profile" class="block text-sm font-medium text-gray-700 mb-1">Foto Profil</label>
                     <div class="flex items-center gap-4">
                         <img id="foto-preview"
-                             src="{{ $user->foto_profile ? asset('storage/' . $user->foto_profile) : '' }}"
+                                src="{{ $user->foto_profile ? route('peminjam.profil.foto') : '' }}"
                              alt="Preview Foto Profil"
                              class="w-16 h-16 rounded-full object-cover border border-gray-200 {{ $user->foto_profile ? '' : 'hidden' }}">
                         @unless($user->foto_profile)

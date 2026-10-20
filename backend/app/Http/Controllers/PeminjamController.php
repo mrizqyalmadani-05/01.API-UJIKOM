@@ -170,6 +170,18 @@ class PeminjamController extends Controller
         return view('peminjam.profil', compact('user'));
     }
 
+    public function fotoProfil()
+    {
+        $path = auth()->user()->foto_profile;
+
+        abort_unless(
+            $path && str_starts_with($path, 'foto_profil/') && Storage::disk('public')->exists($path),
+            404
+        );
+
+        return Storage::disk('public')->response($path, null, ['Cache-Control' => 'no-store']);
+    }
+
     // Memperbarui data profil (nama, email, no HP, alamat, password, foto)
     public function updateProfil(UpdateProfileRequest $request)
     {
