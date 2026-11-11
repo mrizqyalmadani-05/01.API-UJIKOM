@@ -49,39 +49,4 @@
         </a>
     </div>
 
-    {{-- Log Aktivitas Terbaru --}}
-    <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
-        <div class="p-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-            <h3 class="text-base font-bold text-gray-800">Log Aktivitas Terbaru</h3>
-            <a href="{{ route('admin.log.index') }}"
-               class="text-xs text-blue-600 hover:underline font-medium">Lihat semua &rarr;</a>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left border-collapse">
-                <thead>
-                    <tr class="bg-gray-100 text-gray-600 uppercase text-xs tracking-wider">
-                        <th class="py-3 px-4 border-b">Waktu</th>
-                        <th class="py-3 px-4 border-b">User</th>
-                        <th class="py-3 px-4 border-b">Aktivitas</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-700">
-                    @forelse($logs as $log)
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="py-3 px-4 border-b text-xs text-gray-500 whitespace-nowrap">
-                                {{ $log->created_at->format('d M Y, H:i') }}
-                            </td>
-                            <td class="py-3 px-4 border-b font-medium">{{ $log->user->name ?? 'Sistem' }}</td>
-                            <td class="py-3 px-4 border-b">{{ $log->aktivitas }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="3" class="py-4 text-center text-gray-400">Belum ada aktivitas.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-
 @endsection

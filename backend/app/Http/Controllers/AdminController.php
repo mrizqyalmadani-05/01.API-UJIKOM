@@ -26,11 +26,10 @@ class AdminController extends Controller
         $totalPeminjaman = Peminjaman::count();
         $sedangDipinjam  = Peminjaman::where('status', 'dipinjam')->count();
         $diajukan        = Peminjaman::where('status', 'diajukan')->count();
-        $logs            = LogAktivitas::with('user')->latest()->take(10)->get();
 
         return view('admin.dashboard', compact(
             'totalAlat', 'totalUser', 'totalPeminjaman',
-            'sedangDipinjam', 'diajukan', 'logs'
+            'sedangDipinjam', 'diajukan'
         ));
     }
 
