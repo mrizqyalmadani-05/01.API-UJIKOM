@@ -391,6 +391,25 @@ class AdminController extends Controller
     public function destroyUser($id)
     {
         $user = User::findOrFail($id);
+
+        // Admin tidak boleh menghapus akunnya sendiri
+        if ($user->id === auth()->id()) {
+            return redirect()->route('admin.user.index')
+                ->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+        }
+
+        // Peminjam yang masih meminjam barang tidak boleh dihapus
+        if ($user->role === 'peminjam') {
+            $masihMeminjam = Peminjaman::where('user_id', $user->id)
+                ->whereIn('status', ['dipinjam', 'pengajuan_kembali', 'dikembalikan'])
+                ->exists();
+
+            if ($masihMeminjam) {
+                return redirect()->route('admin.user.index')
+                    ->with('error', "User {$user->name} tidak dapat dihapus karena masih memiliki peminjaman yang belum selesai.");
+            }
+        }
+
         $user->delete();
 
         return redirect()->route('admin.user.index')->with('success', 'User berhasil dihapus.');
