@@ -15,9 +15,10 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        // Jika belum login, arahkan ke halaman login
+        // Jika belum login, arahkan ke halaman login dengan intended URL
         if (!auth()->check()) {
-            return redirect()->route('login');
+            $intended = $request->path() !== '/' ? '/' . $request->path() : '/';
+            return redirect()->route('login', ['redirect' => $intended]);
         }
 
         // Gabungkan semua argumen lalu pisahkan berdasarkan koma

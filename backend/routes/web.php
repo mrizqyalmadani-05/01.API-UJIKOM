@@ -6,10 +6,15 @@ use App\Http\Controllers\PeminjamController;
 use App\Http\Controllers\PetugasController;
 use Illuminate\Support\Facades\Route;
 
-// Redirect halaman utama ke login
+// Landing page
 Route::get('/', function () {
-    return redirect()->route('login');
-});
+    $alats = \App\Models\Alat::with('kategori')
+        ->where('stok', '>', 0)
+        ->latest()
+        ->limit(3)
+        ->get();
+    return view('landing', compact('alats'));
+})->name('home');
 
 // Route Tamu (Belum Login)
 Route::middleware('guest')->group(function () {
@@ -25,7 +30,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 // =========================================================
 // Admin
 // =========================================================
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin', 'no-cache'])->prefix('admin')->name('admin.')->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
@@ -80,7 +85,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 // =========================================================
 // Petugas
 // =========================================================
-Route::middleware(['auth', 'role:petugas,admin'])->prefix('petugas')->name('petugas.')->group(function () {
+Route::middleware(['auth', 'role:petugas,admin', 'no-cache'])->prefix('petugas')->name('petugas.')->group(function () {
 
     // Kelola Peminjaman
     Route::get('/peminjaman', [PetugasController::class, 'indexPeminjaman'])->name('peminjaman.index');
@@ -100,7 +105,7 @@ Route::middleware(['auth', 'role:petugas,admin'])->prefix('petugas')->name('petu
 // =========================================================
 // Peminjam
 // =========================================================
-Route::middleware(['auth', 'role:peminjam'])->prefix('peminjam')->name('peminjam.')->group(function () {
+Route::middleware(['auth', 'role:peminjam', 'no-cache'])->prefix('peminjam')->name('peminjam.')->group(function () {
 
     // Katalog & Pengajuan
     Route::get('/katalog', [PeminjamController::class, 'katalogAlat'])->name('katalog');

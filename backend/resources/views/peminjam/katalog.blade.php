@@ -55,6 +55,7 @@
                     <thead>
                         <tr class="bg-gray-100 text-gray-600 uppercase tracking-wider text-xs">
                             <th class="py-3 px-4 border-b w-12">Pilih</th>
+                            <th class="py-3 px-4 border-b w-16">Gambar</th>
                             <th class="py-3 px-4 border-b">Nama Alat</th>
                             <th class="py-3 px-4 border-b">Kategori</th>
                             <th class="py-3 px-4 border-b">Stok Tersedia</th>
@@ -70,6 +71,18 @@
                                            value="{{ $alat->id }}"
                                            class="w-4 h-4 accent-blue-600 cursor-pointer"
                                            onchange="toggleJumlah({{ $alat->id }}, this.checked)">
+                                </td>
+                                <td class="py-3 px-4 border-b">
+                                    @if($alat->gambar)
+                                        <img src="{{ asset($alat->gambar) }}" alt="{{ $alat->nama_alat }}"
+                                             class="w-12 h-12 object-cover rounded-lg border border-gray-200">
+                                    @else
+                                        <div class="w-12 h-12 rounded-lg border border-gray-200 bg-gray-100 flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5M3.75 3.75h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6A2.25 2.25 0 013.75 3.75z"/>
+                                            </svg>
+                                        </div>
+                                    @endif
                                 </td>
                                 <td class="py-3 px-4 border-b font-medium text-gray-900">
                                     {{ $alat->nama_alat }}
@@ -94,7 +107,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="py-6 text-center text-gray-400">
+                                <td colspan="6" class="py-6 text-center text-gray-400">
                                     Tidak ada alat yang tersedia saat ini.
                                 </td>
                             </tr>

@@ -49,6 +49,17 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
+        // Ambil param redirect jika ada, validasi path internal saja
+        $redirect = $request->input('redirect', '');
+        if (
+            $redirect !== '' &&
+            str_starts_with($redirect, '/') &&
+            !str_starts_with($redirect, '//')
+        ) {
+            return redirect($redirect)
+                ->with('success', 'Registrasi berhasil. Selamat datang, ' . $user->name . '!');
+        }
+
         return redirect()->route('peminjam.katalog')
             ->with('success', 'Registrasi berhasil. Selamat datang, ' . $user->name . '!');
     }
@@ -66,7 +77,18 @@ class AuthController extends Controller
 
             $user = Auth::user();
 
-            // Redirect berdasarkan Role sesuai matriks
+            // Ambil param redirect jika ada, validasi path internal saja
+            // (harus diawali '/' dan bukan '//' atau URL eksternal)
+            $redirect = $request->query('redirect', '');
+            if (
+                $redirect !== '' &&
+                str_starts_with($redirect, '/') &&
+                !str_starts_with($redirect, '//')
+            ) {
+                return redirect($redirect);
+            }
+
+            // Redirect default berdasarkan Role
             if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard');
             } elseif ($user->role === 'petugas') {

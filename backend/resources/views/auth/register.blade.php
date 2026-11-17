@@ -31,7 +31,7 @@
             </div>
         @endif
 
-        <form action="{{ route('register') }}" method="POST">
+        <form action="{{ route('register') }}{{ request('redirect') ? '?redirect='.urlencode(request('redirect')) : '' }}" method="POST">
             @csrf
 
             <!-- Input Nama Lengkap -->
@@ -87,7 +87,8 @@
         <!-- Link ke Login -->
         <p class="text-center text-sm text-gray-600 mt-4">
             Sudah punya akun?
-            <a href="{{ route('login') }}" class="text-blue-600 font-semibold hover:underline">Login</a>
+            <a href="{{ route('login') }}{{ request('redirect') ? '?redirect='.urlencode(request('redirect')) : '' }}"
+               class="text-blue-600 font-semibold hover:underline">Login</a>
         </p>
     </div>
 
