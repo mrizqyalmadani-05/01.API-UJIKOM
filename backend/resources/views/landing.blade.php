@@ -238,6 +238,14 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .catalog-item-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: inherit;
         }
 
         .catalog-item-icon svg { color: var(--blue); }
@@ -259,6 +267,92 @@
         }
 
         .catalog-card-footer .btn { width: 100%; }
+
+        /* ───── GALERI ALAT ───── */
+        .galeri { background: #fff; }
+
+        .galeri-header { margin-bottom: 48px; }
+
+        .galeri-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .galeri-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: box-shadow .2s, transform .2s;
+        }
+
+        .galeri-card:hover {
+            box-shadow: 0 12px 32px rgba(15,23,42,.10);
+            transform: translateY(-3px);
+        }
+
+        .galeri-img {
+            position: relative;
+            aspect-ratio: 4 / 3;
+            background: #F1F5F9;
+            overflow: hidden;
+        }
+
+        .galeri-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform .3s;
+        }
+
+        .galeri-card:hover .galeri-img img { transform: scale(1.04); }
+
+        .galeri-img .img-fallback {
+            position: absolute;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 8px;
+            color: #94A3B8;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .galeri-stok {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(255,255,255,.95);
+            color: var(--green);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 999px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.12);
+        }
+
+        .galeri-info { padding: 18px 20px 22px; }
+        .galeri-info .galeri-nama { font-size: 16px; font-weight: 700; color: var(--text-main); }
+        .galeri-info .galeri-kat {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--blue);
+            background: #EFF6FF;
+            padding: 3px 10px;
+            border-radius: 999px;
+        }
+        .galeri-info .galeri-desc {
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--text-sec);
+            line-height: 1.6;
+        }
 
         /* ───── SECTION WRAPPER ───── */
         .section { padding: 96px 64px; }
@@ -490,6 +584,7 @@
             .hero-inner { grid-template-columns: 1fr; }
             .catalog-card { max-width: 440px; }
             .hero h1 { font-size: 42px; }
+            .galeri-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 768px) {
@@ -509,6 +604,7 @@
             .cards-grid { grid-template-columns: 1fr; }
             .steps-grid { grid-template-columns: 1fr; }
             .steps-grid::before { display: none; }
+            .galeri-grid { grid-template-columns: 1fr; }
 
             .section-title { font-size: 28px; }
 
@@ -531,7 +627,7 @@
     <a href="{{ url('/') }}" class="nav-logo">PEMINJAMAN ALAT</a>
 
     <ul class="nav-links">
-        <li><a href="#katalog">Katalog</a></li>
+        <li><a href="#galeri-alat">Katalog</a></li>
         <li><a href="#cara-kerja">Cara Kerja</a></li>
         <li><a href="#keunggulan">Keunggulan</a></li>
         <li><a href="#faq">FAQ</a></li>
@@ -551,7 +647,7 @@
 
 <!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu" role="menu">
-    <a href="#katalog" role="menuitem">Katalog</a>
+    <a href="#galeri-alat" role="menuitem">Katalog</a>
     <a href="#cara-kerja" role="menuitem">Cara Kerja</a>
     <a href="#keunggulan" role="menuitem">Keunggulan</a>
     <a href="#faq" role="menuitem">FAQ</a>
@@ -576,7 +672,7 @@
 
             <div class="hero-actions">
                 <a href="{{ $borrowTarget }}" class="btn btn-lg btn-white">Mulai Meminjam</a>
-                <a href="#keunggulan" class="btn btn-lg btn-outline-white">Lihat Katalog</a>
+                <a href="#galeri-alat" class="btn btn-lg btn-outline-white">Lihat Katalog</a>
             </div>
 
             <div class="hero-stats">
@@ -607,9 +703,17 @@
                     @forelse($alats as $alat)
                     <div class="catalog-item">
                         <div class="catalog-item-icon">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
-                            </svg>
+                            @if($alat->gambar)
+                                <img src="{{ asset($alat->gambar) }}" alt="{{ $alat->nama_alat }}" loading="lazy"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                <svg style="display:none" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+                                </svg>
+                            @else
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+                                </svg>
+                            @endif
                         </div>
                         <div class="catalog-item-info">
                             <div class="item-name">{{ $alat->nama_alat }}</div>
@@ -630,6 +734,58 @@
             </div>
         </div>
 
+    </div>
+</section>
+
+
+<!-- ============================================================
+     GALERI ALAT (gambar otomatis dari data alat yang ditambahkan admin)
+     ============================================================ -->
+<section class="section galeri" id="galeri-alat">
+    <div class="section-inner">
+        <div class="galeri-header">
+            <span class="section-label">Katalog Alat</span>
+            <h2 class="section-title">Alat yang tersedia untuk dipinjam</h2>
+            <p class="section-sub">Foto diambil otomatis dari data alat yang ditambahkan admin — alat yang baru ditambahkan beserta fotonya akan langsung tampil di sini.</p>
+        </div>
+
+        <div class="galeri-grid">
+            @forelse($galeriAlats as $alat)
+                <div class="galeri-card">
+                    <div class="galeri-img">
+                        @if($alat->gambar)
+                            <img src="{{ asset($alat->gambar) }}" alt="{{ $alat->nama_alat }}" loading="lazy"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="img-fallback">
+                                <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5M3.75 3.75h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6A2.25 2.25 0 013.75 3.75z"/>
+                                </svg>
+                                <span>Tanpa foto</span>
+                            </div>
+                        @else
+                            <div class="img-fallback" style="display:flex;">
+                                <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5M3.75 3.75h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6A2.25 2.25 0 013.75 3.75z"/>
+                                </svg>
+                                <span>Tanpa foto</span>
+                            </div>
+                        @endif
+                        <span class="galeri-stok">{{ $alat->stok }} unit</span>
+                    </div>
+                    <div class="galeri-info">
+                        <div class="galeri-nama">{{ $alat->nama_alat }}</div>
+                        <span class="galeri-kat">{{ $alat->kategori->nama_kategori ?? '-' }}</span>
+                        @if($alat->deskripsi)
+                            <p class="galeri-desc">{{ Str::limit($alat->deskripsi, 90) }}</p>
+                        @endif
+                    </div>
+                </div>
+            @empty
+                <div style="grid-column: 1 / -1; text-align: center; color: var(--text-sec); font-size: 15px; padding: 40px; border: 1px dashed var(--border); border-radius: 14px;">
+                    Belum ada alat yang ditambahkan.
+                </div>
+            @endforelse
+        </div>
     </div>
 </section>
 

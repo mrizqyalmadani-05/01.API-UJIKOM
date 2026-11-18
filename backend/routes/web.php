@@ -8,12 +8,21 @@ use Illuminate\Support\Facades\Route;
 
 // Landing page
 Route::get('/', function () {
+    // 3 alat terbaru untuk kartu preview di hero
     $alats = \App\Models\Alat::with('kategori')
         ->where('stok', '>', 0)
         ->latest()
         ->limit(3)
         ->get();
-    return view('landing', compact('alats'));
+
+    // Semua alat untuk galeri gambar di landing page
+    $galeriAlats = \App\Models\Alat::with('kategori')
+        ->where('stok', '>', 0)
+        ->latest()
+        ->limit(6)
+        ->get();
+
+    return view('landing', compact('alats', 'galeriAlats'));
 })->name('home');
 
 // Route Tamu (Belum Login)
